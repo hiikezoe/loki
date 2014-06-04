@@ -389,6 +389,14 @@ struct target targets[] = {
 		.hdr = 0xf8c2440,
 		.use_original_page_size = true,
 	},
+	{
+		.vendor = "Softbank",
+		.device = "DIGNO R 202K",
+		.build = "101.0.2c10",
+		.injection_address = 0x88f00414,
+		.hdr = 0x88f581a4,
+		.use_original_page_size = true,
+	},
 };
 
 static unsigned char patch[] = PATCH;
