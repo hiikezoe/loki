@@ -397,6 +397,14 @@ struct target targets[] = {
 		.hdr = 0x88f581a4,
 		.use_original_page_size = true,
 	},
+	{
+		.vendor = "Softbank",
+		.device = "HONEY BEE 201K",
+		.build = "117.1.1c00",
+		.injection_address = 0x88f00378,
+		.hdr = 0x88f581a4,
+		.use_original_page_size = true,
+	},
 };
 
 static unsigned char patch[] = PATCH;
