@@ -10,6 +10,7 @@
  */
 
 #include <stdio.h>
+#include <stdbool.h>
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
@@ -24,7 +25,7 @@ struct target {
 	char *build;
 	unsigned long injection_address;
 	unsigned long hdr;
-	int lg;
+	bool use_original_page_size;
 };
 
 struct target targets[] = {
@@ -34,7 +35,7 @@ struct target targets[] = {
 		.build = "JDQ39.I337UCUAMDB or JDQ39.I337UCUAMDL",
 		.injection_address = 0x88e0ff98,
 		.hdr = 0x88f3bafc,
-		.lg = 0,
+		.use_original_page_size = false,
 	},
 	{
 		.vendor = "Verizon",
@@ -42,7 +43,7 @@ struct target targets[] = {
 		.build = "JDQ39.I545VRUAMDK",
 		.injection_address = 0x88e0fe98,
 		.hdr = 0x88f372fc,
-		.lg = 0,
+		.use_original_page_size = false,
 	},
 	{
 		.vendor = "DoCoMo",
@@ -50,7 +51,7 @@ struct target targets[] = {
 		.build = "JDQ39.SC04EOMUAMDI",
 		.injection_address = 0x88e0fcd8,
 		.hdr = 0x88f0b2fc,
-		.lg = 0,
+		.use_original_page_size = false,
 	},
 	{
 		.vendor = "Verizon",
@@ -58,7 +59,7 @@ struct target targets[] = {
 		.build = "IMM76D.I200VRALH2",
 		.injection_address = 0x88e0f5c0,
 		.hdr = 0x88ed32e0,
-		.lg = 0,
+		.use_original_page_size = false,
 	},
 	{
 		.vendor = "Verizon",
@@ -66,7 +67,7 @@ struct target targets[] = {
 		.build = "JZO54K.I200VRBMA1",
 		.injection_address = 0x88e101ac,
 		.hdr = 0x88ed72e0,
-		.lg = 0,
+		.use_original_page_size = false,
 	},
 	{
 		.vendor = "DoCoMo",
@@ -74,7 +75,7 @@ struct target targets[] = {
 		.build = "L01E20b",
 		.injection_address = 0x88F10E48,
 		.hdr = 0x88F54418,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "DoCoMo",
@@ -82,7 +83,7 @@ struct target targets[] = {
 		.build = "L04E10f",
 		.injection_address = 0x88f1102c,
 		.hdr = 0x88f54418,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "AT&T or HK",
@@ -90,7 +91,7 @@ struct target targets[] = {
 		.build = "E98010g or E98810b",
 		.injection_address = 0x88f11084,
 		.hdr = 0x88f54418,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "KT, LGU, or SKT",
@@ -98,7 +99,7 @@ struct target targets[] = {
 		.build = "F240K10o, F240L10v, or F240S10w",
 		.injection_address = 0x88f110b8,
 		.hdr = 0x88f54418,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "KT, LGU, or SKT",
@@ -106,7 +107,7 @@ struct target targets[] = {
 		.build = "F160K20g, F160L20f, F160LV20d, or F160S20f",
 		.injection_address = 0x88f10864,
 		.hdr = 0x88f802b8,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "MetroPCS",
@@ -114,7 +115,7 @@ struct target targets[] = {
 		.build = "MS87010a_05",
 		.injection_address = 0x88f0e634,
 		.hdr = 0x88f68194,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "MetroPCS",
@@ -122,7 +123,7 @@ struct target targets[] = {
 		.build = "MS77010f_01",
 		.injection_address = 0x88f1015c,
 		.hdr = 0x88f58194,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "Verizon",
@@ -130,7 +131,7 @@ struct target targets[] = {
 		.build = "VS87010B_12",
 		.injection_address = 0x88f10adc,
 		.hdr = 0x88f702bc,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "Verizon",
@@ -138,7 +139,7 @@ struct target targets[] = {
 		.build = "VS93021B_05",
 		.injection_address = 0x88f10c10,
 		.hdr = 0x88f84514,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "Boost Mobile",
@@ -146,7 +147,7 @@ struct target targets[] = {
 		.build = "LG870ZV4_06",
 		.injection_address = 0x88f11714,
 		.hdr = 0x88f842ac,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "US Cellular",
@@ -154,7 +155,7 @@ struct target targets[] = {
 		.build = "US78011a",
 		.injection_address = 0x88f112c8,
 		.hdr = 0x88f84518,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "Sprint",
@@ -162,7 +163,7 @@ struct target targets[] = {
 		.build = "LG870ZV5_02",
 		.injection_address = 0x88f11710,
 		.hdr = 0x88f842a8,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "Virgin Mobile",
@@ -170,7 +171,7 @@ struct target targets[] = {
 		.build = "LS720ZV5",
 		.injection_address = 0x88f108f0,
 		.hdr = 0x88f854f4,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "T-Mobile and MetroPCS",
@@ -178,7 +179,7 @@ struct target targets[] = {
 		.build = "LS720ZV5",
 		.injection_address = 0x88f10264,
 		.hdr = 0x88f64508,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "AT&T",
@@ -186,7 +187,7 @@ struct target targets[] = {
 		.build = "D80010d",
 		.injection_address = 0xf8132ac,
 		.hdr = 0xf906440,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "Verizon",
@@ -194,7 +195,7 @@ struct target targets[] = {
 		.build = "VS98010b",
 		.injection_address = 0xf8131f0,
 		.hdr = 0xf906440,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "AT&T",
@@ -202,7 +203,7 @@ struct target targets[] = {
 		.build = "D80010o",
 		.injection_address = 0xf813428,
 		.hdr = 0xf904400,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "Verizon",
@@ -210,7 +211,7 @@ struct target targets[] = {
 		.build = "VS98012b",
 		.injection_address = 0xf813210,
 		.hdr = 0xf906440,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "T-Mobile or Canada",
@@ -218,7 +219,7 @@ struct target targets[] = {
 		.build = "D80110c or D803",
 		.injection_address = 0xf813294,
 		.hdr = 0xf906440,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "International",
@@ -226,7 +227,7 @@ struct target targets[] = {
 		.build = "D802b",
 		.injection_address = 0xf813a70,
 		.hdr = 0xf9041c0,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "Sprint",
@@ -234,7 +235,7 @@ struct target targets[] = {
 		.build = "LS980ZV7",
 		.injection_address = 0xf813460,
 		.hdr = 0xf9041c0,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "KT or LGU",
@@ -242,7 +243,7 @@ struct target targets[] = {
 		.build = "F320K, F320L",
 		.injection_address = 0xf81346c,
 		.hdr = 0xf8de440,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "SKT",
@@ -250,7 +251,7 @@ struct target targets[] = {
 		.build = "F320S",
 		.injection_address = 0xf8132e4,
 		.hdr = 0xf8ee440,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "SKT",
@@ -258,7 +259,7 @@ struct target targets[] = {
 		.build = "F320S11c",
 		.injection_address = 0xf813470,
 		.hdr = 0xf8de440,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "DoCoMo",
@@ -266,7 +267,7 @@ struct target targets[] = {
 		.build = "L-01F",
 		.injection_address = 0xf813538,
 		.hdr = 0xf8d41c0,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "KT",
@@ -274,7 +275,7 @@ struct target targets[] = {
 		.build = "F340K",
 		.injection_address = 0xf8124a4,
 		.hdr = 0xf8b6440,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "KDDI",
@@ -282,7 +283,7 @@ struct target targets[] = {
 		.build = "LGL2310d",
 		.injection_address = 0xf81261c,
 		.hdr = 0xf8b41c0,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "International",
@@ -290,7 +291,7 @@ struct target targets[] = {
 		.build = "P87510e",
 		.injection_address = 0x88f10a9c,
 		.hdr = 0x88f702b8,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "SKT",
@@ -298,7 +299,7 @@ struct target targets[] = {
 		.build = "F260S10l",
 		.injection_address = 0x88f11398,
 		.hdr = 0x88f8451c,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "International",
@@ -306,7 +307,7 @@ struct target targets[] = {
 		.build = "V50010a",
 		.injection_address = 0x88f10814,
 		.hdr = 0x88f801b8,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "International",
@@ -314,7 +315,7 @@ struct target targets[] = {
 		.build = "V50010c or V50010e",
 		.injection_address = 0x88f108bc,
 		.hdr = 0x88f801b8,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
                 .vendor = "Verizon",
@@ -322,7 +323,7 @@ struct target targets[] = {
                 .build = "VK81010c",
                 .injection_address = 0x88f11080,
                 .hdr = 0x88fd81b8,
-                .lg = 1,
+                .use_original_page_size = true,
         },
 	{
 		.vendor = "International",
@@ -330,7 +331,7 @@ struct target targets[] = {
 		.build = "D60510a",
 		.injection_address = 0x88f10d98,
 		.hdr = 0x88f84aa4,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "MetroPCS",
@@ -338,7 +339,7 @@ struct target targets[] = {
 		.build = "MS50010e",
 		.injection_address = 0x88f10260,
 		.hdr = 0x88f70508,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "Open EU",
@@ -346,7 +347,7 @@ struct target targets[] = {
 		.build = "D50510a",
 		.injection_address = 0x88f10284,
 		.hdr = 0x88f70aa4,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "KDDI",
@@ -354,7 +355,7 @@ struct target targets[] = {
 		.build = "LGL22",
 		.injection_address = 0xf813458,
 		.hdr = 0xf8d41c0,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "KT",
@@ -362,7 +363,7 @@ struct target targets[] = {
 		.build = "F220K",
 		.injection_address = 0x88f11034,
 		.hdr = 0x88f54418,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "International",
@@ -370,7 +371,7 @@ struct target targets[] = {
 		.build = "F300L",
 		.injection_address = 0xf813170,
 		.hdr = 0xf8d2440,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "Sprint",
@@ -378,7 +379,7 @@ struct target targets[] = {
 		.build = "LS840ZVK",
 		.injection_address = 0x4010fe18,
 		.hdr = 0x40194198,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 	{
 		.vendor = "International",
@@ -386,7 +387,7 @@ struct target targets[] = {
 		.build = "D95510a",
 		.injection_address = 0xf812490,
 		.hdr = 0xf8c2440,
-		.lg = 1,
+		.use_original_page_size = true,
 	},
 };
 
@@ -581,7 +582,7 @@ int loki_patch(const char* partition_label, const char* aboot_image, const char*
 
 	hdr->ramdisk_addr = tgt->injection_address - offset;
 
-	if (tgt->lg) {
+	if (tgt->use_original_page_size) {
 		fake_size = page_size;
 		hdr->ramdisk_size = page_size;
 	}
