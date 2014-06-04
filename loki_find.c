@@ -16,7 +16,7 @@ int loki_find(const char* aboot_image)
 	int aboot_fd, i;
 	struct stat st;
 	void *aboot, *ptr;
-	unsigned long aboot_base, check_sigs, boot_mmc;
+	unsigned long aboot_base, injection_address, boot_mmc;
 
 	aboot_fd = open(aboot_image, O_RDONLY);
 	if (aboot_fd < 0) {
@@ -35,33 +35,33 @@ int loki_find(const char* aboot_image)
 		return 1;
 	}
 
-	check_sigs = 0;
+	injection_address = 0;
 	aboot_base = *(unsigned int *)(aboot + 12) - 0x28;
 
 	/* Do a pass to find signature checking function */
 	for (ptr = aboot; ptr < aboot + st.st_size - 0x1000; ptr++) {
 		for (i = 0; i < sizeof(opcodes) / sizeof(opcodes[0]); i++) {
 			if (!memcmp(ptr, opcodes[i], strlen(opcodes[i]))) {
-				check_sigs = (unsigned long)ptr - (unsigned long)aboot + aboot_base;
+				injection_address = (unsigned long)ptr - (unsigned long)aboot + aboot_base;
 				break;
 			}
 		}
 
 		if (!memcmp(ptr, PATTERN, 8)) {
 
-			check_sigs = (unsigned long)ptr - (unsigned long)aboot + aboot_base;
+			injection_address = (unsigned long)ptr - (unsigned long)aboot + aboot_base;
 
 			/* Don't break, because the other LG patterns override this one */
 			continue;
 		}
 	}
 
-	if (!check_sigs) {
+	if (!injection_address) {
 		printf("[-] Could not find signature checking function.\n");
 		return 1;
 	}
 
-	printf("[+] Signature check function: %.08lx\n", check_sigs);
+	printf("[+] Signature check function: %.08lx\n", injection_address);
 
 	boot_mmc = 0;
 
