@@ -477,14 +477,11 @@ int loki_patch(const char* partition_label, const char* aboot_image, const char*
 	aboot_base = *(unsigned int *)(aboot + 12) - 0x28;
 
 	for (ptr = aboot; ptr < aboot + st.st_size - 0x1000; ptr++) {
-		if (!memcmp(ptr, PATTERN1, 8) ||
-			!memcmp(ptr, PATTERN2, 8) ||
-			!memcmp(ptr, PATTERN3, 8) ||
-			!memcmp(ptr, PATTERN4, 8) ||
-			!memcmp(ptr, PATTERN5, 8)) {
-
-			target = (unsigned long)ptr - (unsigned long)aboot + aboot_base;
-			break;
+		for (i = 0; i < sizeof(opcodes) / sizeof(opcodes[0]); i++) {
+			if (!memcmp(ptr, opcodes[i], strlen(opcodes[i]))) {
+				target = (unsigned long)ptr - (unsigned long)aboot + aboot_base;
+				break;
+			}
 		}
 	}
 
@@ -494,7 +491,7 @@ int loki_patch(const char* partition_label, const char* aboot_image, const char*
 
 	if (!target) {
 		for (ptr = aboot; ptr < aboot + st.st_size - 0x1000; ptr++) {
-			if (!memcmp(ptr, PATTERN6, 8)) {
+			if (!memcmp(ptr, PATTERN, 8)) {
 
 				target = (unsigned long)ptr - (unsigned long)aboot + aboot_base;
 				break;

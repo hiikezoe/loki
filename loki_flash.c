@@ -18,7 +18,7 @@
 
 int loki_flash(const char* partition_label, const char* loki_image)
 {
-	int ifd, aboot_fd, ofd, recovery, offs, match;
+	int ifd, aboot_fd, ofd, recovery, offs, match, i;
 	void *orig, *aboot, *patch;
 	struct stat st;
 	struct boot_img_hdr *hdr;
@@ -101,13 +101,13 @@ int loki_flash(const char* partition_label, const char* loki_image)
 			return 1;
 		}
 
-		if (!memcmp(patch, PATTERN1, 8) ||
-			!memcmp(patch, PATTERN2, 8) ||
-			!memcmp(patch, PATTERN3, 8) ||
-			!memcmp(patch, PATTERN4, 8) ||
-			!memcmp(patch, PATTERN5, 8) ||
-			!memcmp(patch, PATTERN6, 8)) {
-
+		for (i = 0; i < sizeof(opcodes) / sizeof(opcodes[0]); i++) {
+			if (!memcmp(patch, opcodes[i], strlen(opcodes[i]))) {
+				match = 1;
+				break;
+			}
+		}
+		if (!memcmp(patch, PATTERN, 8)) {
 			match = 1;
 			break;
 		}
