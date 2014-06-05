@@ -398,6 +398,14 @@ struct target targets[] = {
 		.use_original_page_size = true,
 	},
 	{
+		.vendor = "Disney Mobile on SoftBank",
+		.device = "DM015K",
+		.build = "100.1.1600",
+		.injection_address = 0x88f00414,
+		.hdr = 0x88f581a4,
+		.use_original_page_size = true,
+	},
+	{
 		.vendor = "Softbank",
 		.device = "HONEY BEE 201K",
 		.build = "117.1.1c00",
