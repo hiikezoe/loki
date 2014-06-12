@@ -358,6 +358,14 @@ struct target targets[] = {
 		.use_original_page_size = true,
 	},
 	{
+		.vendor = "KDDI",
+		.device = "LG",
+		.build = "LGL21",
+		.injection_address = 0x88f10218,
+		.hdr = 0x88f50198,
+		.use_original_page_size = 1,
+	},
+	{
 		.vendor = "KT",
 		.device = "LG Optimus GK",
 		.build = "F220K",
