@@ -70,6 +70,14 @@ struct target targets[] = {
 		.use_original_page_size = false,
 	},
 	{
+		.vendor = "T-Mobile",
+		.device = "LG Optimus F3Q",
+		.build = "D52010c",
+		.check_sigs = 0x88f1079c,
+		.hdr = 0x88f64508,
+		.lg = 1,
+	},
+	{
 		.vendor = "DoCoMo",
 		.device = "LG Optimus G",
 		.build = "L01E20b",
@@ -318,13 +326,13 @@ struct target targets[] = {
 		.use_original_page_size = true,
 	},
 	{
-                .vendor = "Verizon",
-                .device = "LG G Pad 8.3",
-                .build = "VK81010c",
-                .injection_address = 0x88f11080,
-                .hdr = 0x88fd81b8,
-                .use_original_page_size = true,
-        },
+		.vendor = "Verizon",
+		.device = "LG G Pad 8.3",
+		.build = "VK81010c",
+		.injection_address = 0x88f11080,
+		.hdr = 0x88fd81b8,
+		.use_original_page_size = true,
+	},
 	{
 		.vendor = "International",
 		.device = "LG Optimus L9 II",
@@ -420,6 +428,14 @@ struct target targets[] = {
 		.injection_address = 0x88f00378,
 		.hdr = 0x88f581a4,
 		.use_original_page_size = true,
+	},
+	{
+		.vendor = "Sprint",
+		.device = "LG Mach",
+		.build = "LS860ZV7",
+		.check_sigs = 0x88f102b4,
+		.hdr = 0x88f6c194,
+		.lg = 1,
 	},
 };
 
