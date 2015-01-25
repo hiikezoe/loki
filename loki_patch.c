@@ -73,9 +73,9 @@ struct target targets[] = {
 		.vendor = "T-Mobile",
 		.device = "LG Optimus F3Q",
 		.build = "D52010c",
-		.check_sigs = 0x88f1079c,
+		.injection_address = 0x88f1079c,
 		.hdr = 0x88f64508,
-		.lg = 1,
+		.use_original_page_size = 1,
 	},
 	{
 		.vendor = "DoCoMo",
@@ -433,9 +433,9 @@ struct target targets[] = {
 		.vendor = "Sprint",
 		.device = "LG Mach",
 		.build = "LS860ZV7",
-		.check_sigs = 0x88f102b4,
+		.injection_address = 0x88f102b4,
 		.hdr = 0x88f6c194,
-		.lg = 1,
+		.use_original_page_size = 1,
 	},
 };
 
